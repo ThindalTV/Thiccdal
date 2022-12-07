@@ -25,8 +25,11 @@ jobs:
       - name: Build with dotnet
         run: dotnet build src/Thiccdal.sln --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish src/Thiccdal.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Dotnet publish Webjob
+        run: dotnet publish src/Thiccdal.Server/Thiccdal.Server.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp/App_Data/Jobs/Continuous/Thiccdal.Server
+        
+      #- name: dotnet publish Front
+      #  run: dotnet publish src/Thiccdal.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
