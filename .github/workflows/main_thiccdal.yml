@@ -57,4 +57,4 @@ jobs:
           app-name: 'thiccdal'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7015B08828EA4096844A1D816C009395 }}
-          package: './publish/'
+          package: .
