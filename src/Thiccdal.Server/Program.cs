@@ -13,7 +13,7 @@ var servicesCollection = new ServiceCollection();
 servicesCollection.AddSingleton((IServiceProvider) => cancellationTokenSource);
 
 Console.WriteLine("Registering Mediatr.");
-servicesCollection.AddMediatR(GetAssemblies().ToArray());
+servicesCollection.AddMediatR(GetThiccdalAssemblies().ToArray());
 
 // Register services to DI
 Console.WriteLine("Registering Thiccdal services.");
@@ -54,12 +54,12 @@ foreach(var service in services)
 await Task.WhenAll(serviceTasks);
 Console.WriteLine("Thiccdal has stopped.");
 
-static IEnumerable<Assembly> GetAssemblies()
+IEnumerable<Assembly> GetThiccdalAssemblies()
 {
     var list = new List<string>();
     var stack = new Stack<Assembly>();
 
-    stack.Push(Assembly.GetEntryAssembly());
+    stack.Push(Assembly.GetEntryAssembly() ?? throw new NullReferenceException("Failed to locate entry assembly. Huh?"));
 
     do
     {
@@ -68,7 +68,7 @@ static IEnumerable<Assembly> GetAssemblies()
         yield return asm;
 
         foreach (var reference in asm.GetReferencedAssemblies())
-            if (!list.Contains(reference.FullName))
+            if (!list.Contains(reference.FullName) && reference.FullName.ToLower().StartsWith("thiccdal"))
             {
                 stack.Push(Assembly.Load(reference));
                 list.Add(reference.FullName);
