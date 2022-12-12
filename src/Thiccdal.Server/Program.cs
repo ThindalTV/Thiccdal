@@ -5,6 +5,8 @@ using System.Reflection;
 using Thiccdal.Shared;
 using Thiccdal.OverlayService;
 using Microsoft.Extensions.Logging;
+using Thiccdal.EventAggregator;
+using Thiccdal.Shared.EventAggregator;
 
 Console.WriteLine("Starting Thiccdal.");
 
@@ -13,7 +15,7 @@ CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 var servicesCollection = new ServiceCollection();
 servicesCollection.AddSingleton((IServiceProvider) => cancellationTokenSource);
 servicesCollection.AddLogging(config => config.AddConsole());
-
+servicesCollection.AddSingleton<IEventAggregator, EventAggregator>();
 // Register services to DI
 Console.WriteLine("Registering Thiccdal services.");
 

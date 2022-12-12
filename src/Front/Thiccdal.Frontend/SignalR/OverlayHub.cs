@@ -8,7 +8,7 @@ namespace Thiccdal.Frontend.SignalR
 
         public async Task Broadcast(string username, string message)
         {
-            await Clients.AllExcept(Context.ConnectionId).SendAsync("Broadcast", username, message);
+            await Clients.All.SendAsync("Broadcast", username, message);
         }
 
         public override Task OnConnectedAsync()

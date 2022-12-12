@@ -17,7 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Front", "Front", "{778648EA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thiccdal.Frontend", "Front\Thiccdal.Frontend\Thiccdal.Frontend.csproj", "{950CE4BC-51E7-4B00-9433-5EB9D6D0F978}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thiccdal.OverlayService", "Services\Thiccdal.OverlayService\Thiccdal.OverlayService.csproj", "{52220B76-BE95-466E-B67E-0DFEE2EEF682}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thiccdal.OverlayService", "Services\Thiccdal.OverlayService\Thiccdal.OverlayService.csproj", "{52220B76-BE95-466E-B67E-0DFEE2EEF682}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thiccdal.EventAggregator", "Thiccdal.EventAggregator\Thiccdal.EventAggregator.csproj", "{993E0B50-3953-4384-B1D0-1F1A9649AB27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,10 @@ Global
 		{52220B76-BE95-466E-B67E-0DFEE2EEF682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52220B76-BE95-466E-B67E-0DFEE2EEF682}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52220B76-BE95-466E-B67E-0DFEE2EEF682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{993E0B50-3953-4384-B1D0-1F1A9649AB27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{993E0B50-3953-4384-B1D0-1F1A9649AB27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{993E0B50-3953-4384-B1D0-1F1A9649AB27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{993E0B50-3953-4384-B1D0-1F1A9649AB27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
