@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Thiccdal.TwitchService;
 using Thiccdal.ConsoleControlService;
-using MediatR;
 using System.Reflection;
 using Thiccdal.Shared;
+using Thiccdal.OverlayService;
+using Microsoft.Extensions.Logging;
 
 Console.WriteLine("Starting Thiccdal.");
 
@@ -11,15 +12,14 @@ CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
 var servicesCollection = new ServiceCollection();
 servicesCollection.AddSingleton((IServiceProvider) => cancellationTokenSource);
-
-Console.WriteLine("Registering Mediatr.");
-servicesCollection.AddMediatR(GetThiccdalAssemblies().ToArray());
+servicesCollection.AddLogging(config => config.AddConsole());
 
 // Register services to DI
 Console.WriteLine("Registering Thiccdal services.");
 
 servicesCollection.AddSingleton<IService, ConsoleControlService>();
 servicesCollection.AddSingleton<IService, TwitchService>();
+servicesCollection.AddSingleton<IService, OverlayConnectionService>();
 
 var serviceProvider = servicesCollection.BuildServiceProvider();
 
@@ -53,28 +53,3 @@ foreach(var service in services)
 
 await Task.WhenAll(serviceTasks);
 Console.WriteLine("Thiccdal has stopped.");
-
-IEnumerable<Assembly> GetThiccdalAssemblies()
-{
-    var list = new List<string>();
-    var stack = new Stack<Assembly>();
-
-    stack.Push(Assembly.GetEntryAssembly() ?? throw new NullReferenceException("Failed to locate entry assembly. Huh?"));
-
-    do
-    {
-        var asm = stack.Pop();
-
-        yield return asm;
-
-        foreach (var reference in asm.GetReferencedAssemblies())
-            if (!list.Contains(reference.FullName) && reference.FullName.ToLower().StartsWith("thiccdal"))
-            {
-                stack.Push(Assembly.Load(reference));
-                list.Add(reference.FullName);
-            }
-
-    }
-    while (stack.Count > 0);
-
-}

@@ -8,14 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="11.1.0" />
-    <PackageReference Include="MediatR.Contracts" Version="1.0.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Services\Thiccdal.ConsoleControlService\Thiccdal.ConsoleControlService.csproj" />
+    <ProjectReference Include="..\Services\Thiccdal.OverlayService\Thiccdal.OverlayService.csproj" />
     <ProjectReference Include="..\Services\Thiccdal.TwitchService\Thiccdal.TwitchService.csproj" />
     <ProjectReference Include="..\Thiccdal.Shared\Thiccdal.Shared.csproj" />
   </ItemGroup>

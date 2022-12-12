@@ -1,14 +1,14 @@
-﻿using MediatR;
-using Thiccdal.Shared;
-using Thiccdal.Shared.Contracts;
+﻿using Thiccdal.Shared;
 
 namespace Thiccdal.ConsoleControlService;
 
-public class ConsoleControlService : IService, INotificationHandler<TestRequest>
+public class ConsoleControlService : IService
 {
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private int _counter;
     public ConsoleControlService(CancellationTokenSource cancellationTokenSource)
     {
+        _counter = 0;
         _cancellationTokenSource = cancellationTokenSource;
     }
 
@@ -24,12 +24,6 @@ public class ConsoleControlService : IService, INotificationHandler<TestRequest>
     public Task Stop()
     {
         // NOOP
-        return Task.CompletedTask;
-    }
-
-    Task INotificationHandler<TestRequest>.Handle(TestRequest notification, CancellationToken cancellationToken)
-    {
-        Console.WriteLine($"{nameof(ConsoleControlService)} recieved notification: {notification.Message}");
         return Task.CompletedTask;
     }
 }
