@@ -25,17 +25,17 @@ jobs:
       - name: Build with dotnet
         run: dotnet build src/Thiccdal.sln --configuration Release
 
+      - name: dotnet publish Front
+        run: dotnet publish src/Front/Thiccdal.Frontend/Thiccdal.Frontend.csproj -c Release -o './publish/'
+
       - name: Dotnet publish Webjob
         run: dotnet publish src/Thiccdal.Server/Thiccdal.Server.csproj -c Release -o './publish/App_Data/Jobs/Continuous/Thiccdal.Server'
-        
-      #- name: dotnet publish Front
-      #  run: dotnet publish src/Thiccdal.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: './publish'
 
   deploy:
     runs-on: windows-latest
@@ -57,4 +57,4 @@ jobs:
           app-name: 'thiccdal'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7015B08828EA4096844A1D816C009395 }}
-          package: './publish/'
+          package: .
