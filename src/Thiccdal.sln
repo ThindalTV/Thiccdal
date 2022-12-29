@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thiccdal.Frontend", "Front\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thiccdal.OverlayService", "Services\Thiccdal.OverlayService\Thiccdal.OverlayService.csproj", "{52220B76-BE95-466E-B67E-0DFEE2EEF682}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thiccdal.EventAggregator", "Thiccdal.EventAggregator\Thiccdal.EventAggregator.csproj", "{993E0B50-3953-4384-B1D0-1F1A9649AB27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thiccdal.EventAggregator", "Thiccdal.EventAggregator\Thiccdal.EventAggregator.csproj", "{993E0B50-3953-4384-B1D0-1F1A9649AB27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

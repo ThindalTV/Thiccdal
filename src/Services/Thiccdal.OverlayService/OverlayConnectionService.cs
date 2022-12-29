@@ -17,7 +17,6 @@ namespace Thiccdal.OverlayService
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(_hubUrl)
                 .Build();
-            SubscribeToSignalRHub();
             _eventAggregator = eventAggregator;
         }
 

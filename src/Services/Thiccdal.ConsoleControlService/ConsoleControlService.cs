@@ -7,31 +7,25 @@ namespace Thiccdal.ConsoleControlService;
 public class ConsoleControlService : IService, IEventSubscriber
 {
     private readonly CancellationTokenSource _cancellationTokenSource;
+
     private readonly IEventAggregator _eventAggregator;
 
-    private int _counter;
     public ConsoleControlService(CancellationTokenSource cancellationTokenSource, IEventAggregator eventAggregator)
     {
-        _counter = 0;
         _cancellationTokenSource = cancellationTokenSource;
         _eventAggregator = eventAggregator;
-        _eventAggregator.Subscribe<TestNotification1>(this, TestNotification1Handler);
-        _eventAggregator.Subscribe<TestNotification2>(this, TestNotification2Handler);
+        _eventAggregator.Subscribe<RawDataNotification>(this, RawDataNotificationHandler);
+    }
+
+    private async Task RawDataNotificationHandler(RawDataNotification notification, CancellationToken cancellationToken)
+    {
+        Console.WriteLine($"RawDataNotification: {notification.DateTime.ToShortTimeString()} - {notification.Context}: {notification.RawData}");
+        await Task.CompletedTask;
     }
 
     public void Dispose()
     {
         // NOOP
-    }
-
-    private async Task TestNotification1Handler(TestNotification1 message, CancellationToken token)
-    {
-        Console.WriteLine($"ConsoleControlService recieved TestNotification1: {message.Message}");
-    }
-
-    private async Task TestNotification2Handler(TestNotification2 message, CancellationToken token)
-    {
-        Console.WriteLine($"ConsoleControlService recieved TestNotification2: {message.Message}");
     }
 
     public async Task Start(CancellationToken cancellationToken)
@@ -43,9 +37,5 @@ public class ConsoleControlService : IService, IEventSubscriber
         }, cancellationToken);
     }
 
-    public Task Stop()
-    {
-        // NOOP
-        return Task.CompletedTask;
-    }
+    public Task Stop() => Task.CompletedTask;
 }

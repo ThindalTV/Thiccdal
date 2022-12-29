@@ -1,26 +1,34 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Thiccdal.TwitchService;
-using Thiccdal.ConsoleControlService;
-using System.Reflection;
-using Thiccdal.Shared;
-using Thiccdal.OverlayService;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
+using Thiccdal.ConsoleControlService;
 using Thiccdal.EventAggregator;
+using Thiccdal.OverlayService;
+using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
+using Thiccdal.TwitchService.Config;
 
 Console.WriteLine("Starting Thiccdal.");
+
+// Reading config
+IConfiguration config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .AddUserSecrets(Assembly.GetExecutingAssembly())
+    .Build();
+
 
 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
 var servicesCollection = new ServiceCollection();
 servicesCollection.AddSingleton((IServiceProvider) => cancellationTokenSource);
 servicesCollection.AddLogging(config => config.AddConsole());
+
 servicesCollection.AddSingleton<IEventAggregator, EventAggregator>();
 // Register services to DI
 Console.WriteLine("Registering Thiccdal services.");
-
+servicesCollection.AddTwitchService(config);
 servicesCollection.AddSingleton<IService, ConsoleControlService>();
-servicesCollection.AddSingleton<IService, TwitchService>();
 servicesCollection.AddSingleton<IService, OverlayConnectionService>();
 
 var serviceProvider = servicesCollection.BuildServiceProvider();
