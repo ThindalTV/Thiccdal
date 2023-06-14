@@ -44,6 +44,7 @@ public class UserInfo
     public UserFlags Flags { get; set; }
     public int SubscribedForMonths { get; set; }
 }
+
 public class TwitchChatNotification : Notification
 {
     public Source ChatSource { get; set; }

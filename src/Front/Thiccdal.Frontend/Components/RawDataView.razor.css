@@ -1,0 +1,17 @@
+﻿.rawMessage {
+    border-bottom: 1px solid #CCC;
+    margin-bottom: 1rem;
+}
+
+.time {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.sender {
+    font-weight: bold;
+}
+
+.message {
+    font-weight: lighter;
+}

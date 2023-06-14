@@ -2,7 +2,8 @@
 
 public interface IEventAggregator
 {
-    Task Publish<TPublishNotificationType>(TPublishNotificationType notification, CancellationToken cancellationToken = default) where TPublishNotificationType : Notification;
+    Task Publish<TPublishNotificationType>(TPublishNotificationType notification, IEventSubscriber? @this = null, CancellationToken cancellationToken = default) where TPublishNotificationType : Notification;
     void Subscribe<TSubscribeNotificationType>(IEventSubscriber subscriber, Func<TSubscribeNotificationType, CancellationToken, Task> handler) where TSubscribeNotificationType : Notification;
+    void Unsubscribe<TSubscribeNotification>(IEventSubscriber subscriber) where TSubscribeNotification : Notification;
 
 }

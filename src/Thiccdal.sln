@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thiccdal.EventAggregator", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{BA76C781-6C1F-49DC-86C4-16AE10AF416D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thiccdal.Data.Users", "Data\Thiccdal.Data.Users\Thiccdal.Data.Users.csproj", "{9DD1A10C-421D-4B2C-872B-2967720C7FA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thiccdal.Data.Users", "Data\Thiccdal.Data.Users\Thiccdal.Data.Users.csproj", "{9DD1A10C-421D-4B2C-872B-2967720C7FA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,17 +2,17 @@
 using Thiccdal.Shared.EventAggregator;
 
 namespace Thiccdal.Shared.Notifications;
-public class RawDataNotification : Notification
+public class RawData : Notification
 {
     public string Context { get; }
     public DateTime DateTime { get; }
-    public string RawData { get; }
+    public string Data { get; }
 
-    public RawDataNotification(string context, DateTime dateTime, string rawData)
+    public RawData(string context, DateTime dateTime, string data)
     {
         Context = context;
         DateTime = dateTime;
-        RawData = rawData;
+        Data = data;
     }
 
 }

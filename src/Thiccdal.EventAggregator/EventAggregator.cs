@@ -11,7 +11,7 @@ public class EventAggregator : IEventAggregator
         _handlers = new Dictionary<Type, List<Event>>();
     }
 
-    public Task Publish<TPublishNotificationType>(TPublishNotificationType notification, CancellationToken cancellationToken = default) where TPublishNotificationType : Notification
+    public Task Publish<TPublishNotificationType>(TPublishNotificationType notification, IEventSubscriber? @this = null, CancellationToken cancellationToken = default) where TPublishNotificationType : Notification
     {
         // Locate dictionary entry for type T and call all handlers
         if (_handlers.TryGetValue(typeof(TPublishNotificationType), out var events))
@@ -23,8 +23,11 @@ public class EventAggregator : IEventAggregator
             {
                 try
                 {
-                    // Execute the handler
-                    tasks.Add(@event.Handler(notification, cancellationToken));
+                    if (@this == null || @event.Subscriber != @this)
+                    {
+                        // Execute the handler
+                        tasks.Add(@event.Handler(notification, cancellationToken));
+                    }
                 }
                 catch (ObjectDisposedException)
                 {
@@ -58,6 +61,29 @@ public class EventAggregator : IEventAggregator
         {
             _handlers.Add(typeof(TSubscribeNotification),
                 new List<Event>() { @event });
+        }
+    }
+
+    public void Unsubscribe<TSubscribeNotification>(IEventSubscriber subscriber)
+        where TSubscribeNotification : Notification
+    {
+        // Locate the event list for this notification type
+        if (_handlers.TryGetValue(typeof(TSubscribeNotification), out List<Event> events))
+        {
+            var eventsToRemove = new List<Event>();
+            // Look for the event with the subscriber and remove it
+            foreach (Event @event in events)
+            {
+                if (@event.Subscriber == subscriber)
+                {
+                    eventsToRemove.Add(@event);
+                }
+            }
+            // Remove events from the list
+            if (eventsToRemove.Any())
+            {
+                events.RemoveAll(e => eventsToRemove.Contains(e));
+            }
         }
     }
 }

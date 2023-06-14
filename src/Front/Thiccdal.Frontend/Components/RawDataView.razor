@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client;
+@using Thiccdal.Shared.Notifications;
+
+@inject NavigationManager Navigation
+
+<h3>RawDataView</h3>
+
+@foreach (var message in Messages)
+{
+    <div class="rawMessage row">
+        <div class="col-1 time">@message.DateTime.ToLongTimeString()</div>
+        <div class="col-1 sender">@message.Context</div>
+        <div class="col-10 message">@message.Data</div>
+    </div>
+}
+
+@code {
+    HubConnection hubConnection;
+
+    List<RawData> Messages = new List<RawData>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/overlayhub"))
+            .Build();
+
+        await hubConnection.StartAsync();
+
+        hubConnection.On<RawData>(nameof(RawData), AddRawDataToView);
+
+        LogStart();
+        await base.OnInitializedAsync();
+    }
+
+    private void LogStart()
+    {
+        AddRawDataToView(new RawData("Local", DateTime.Now, $"Connected to {Navigation.ToAbsoluteUri("/overlayhub")}. State is {hubConnection.State}"));
+    }
+
+    private void AddRawDataToView(RawData newRawData)
+    {
+        lock (Messages)
+        {
+            if (Messages.Count > 20)
+            {
+                // Remove oldest(last)
+                Messages.RemoveAt(20);
+            }
+            Messages.Insert(0, newRawData);
+
+            InvokeAsync(() => StateHasChanged());
+        }
+    }
+}

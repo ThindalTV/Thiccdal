@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client;
+@using Thiccdal.Shared.Notifications.Chat;
+
+@inject NavigationManager Navigation
+<h3>Chat View</h3>
+<input type="text" @bind-value="MessageToSend" /> <button @onclick="SendChatMessage">Send</button><br />
+@foreach(var chat in ChatMessages)
+{
+    <div class="chatMessage row">
+        <div class="col-1 source">@chat.Source</div>
+        <div class="col-1 time">@chat.Timestamp.ToLongTimeString()</div>
+        <div class="col-1 channel">@chat.Channel</div>
+        <div class="col-1 sender">@chat.Sender</div>
+        <div class="col-8 message">@chat.Message</div>
+    </div>
+}
+
+@code {
+    HubConnection hubConnection;
+    List<ChatMessage> ChatMessages = new List<ChatMessage>();
+
+    string MessageToSend;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Subscribe to the signalr hub and get raw messages as they arrive
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(
+                Navigation.ToAbsoluteUri("/overlayhub"))
+            .Build();
+
+        hubConnection.On<ChatMessage>(nameof(ChatMessage), AddChatMessage);
+
+        await hubConnection.StartAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task SendChatMessage()
+    {
+        await hubConnection.SendAsync(nameof(ChatMessage), new ChatMessage("Twitch", "Setolyx", "Thiccdal", DateTime.Now, MessageToSend));
+    }
+
+    private void AddChatMessage(ChatMessage newChatMessage)
+    {
+        lock (ChatMessages)
+        {
+            if (ChatMessages.Count > 20)
+            {
+                // Remove oldest(last)
+                ChatMessages.RemoveAt(20);
+            }
+
+            ChatMessages.Insert(0, newChatMessage);
+        }
+
+        InvokeAsync(() => StateHasChanged());
+    }
+}

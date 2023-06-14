@@ -2,17 +2,21 @@
 using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
 using Thiccdal.Shared.Notifications;
+using Thiccdal.Shared.Notifications.Internals;
 using Thiccdal.TwitchService.Config;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
 
+using ChatMessage = Thiccdal.Shared.Notifications.Chat.ChatMessage;
+
 namespace Thiccdal.TwitchService;
 
-public class TwitchService : IService
+public class TwitchService : IService, IEventSubscriber
 {
     private CancellationToken _cancellationToken;
+    private bool disposedValue;
     private readonly IEventAggregator _eventAggregator;
     private readonly TwitchConfig _twitchConfig;
     private readonly TwitchClient _client;
@@ -30,9 +34,24 @@ public class TwitchService : IService
 
         WebSocketClient customClient = new WebSocketClient(clientOptions);
         _client = new TwitchClient(customClient);
+
+        // Register events to listen for
+        _eventAggregator.Subscribe<ChatMessage>(this, SendMessageHandler);
     }
 
+    private async Task SendMessageHandler(ChatMessage message, CancellationToken cancellationToken)
+    {
+        if(message.Source != Source.Twitch.ToString())
+        {
+            return;
+        }
 
+        if( _client.JoinedChannels.Any(js => js.Channel.ToLower() == message.Channel.ToLower()) )
+        {
+            _client.SendMessage(message.Channel, message.Message);
+            await _eventAggregator.Publish(new LogMessageNotification(nameof(TwitchService), $"Message to {message.Channel}: {message.Message}"));
+        }
+    }
 
     public async Task Start(CancellationToken cancellationToken)
     {
@@ -61,6 +80,7 @@ public class TwitchService : IService
         long unixTimeTicks = long.Parse(e.ChatMessage.TmiSentTs);
         DateTime messageTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local).AddTicks(unixTimeTicks * TimeSpan.TicksPerMillisecond);
 
+        await _eventAggregator.Publish(new ChatMessage(Source.Twitch.ToString(), e.ChatMessage.Channel, e.ChatMessage.Username, messageTime, e.ChatMessage.Message), this, _cancellationToken);
         // TODO: Attempt to locate user object. If properties have changed update it
         var user = new UserInfo()
         {
@@ -123,12 +143,12 @@ public class TwitchService : IService
             Flags = messageFlags
         };
 
-        await _eventAggregator.Publish(msg, _cancellationToken);
+        await _eventAggregator.Publish(msg, cancellationToken: _cancellationToken);
     }
 
     private async void _client_OnLog(object? sender, TwitchLib.Client.Events.OnLogArgs e)
     {
-        await _eventAggregator.Publish(new RawDataNotification(e.BotUsername, e.DateTime, e.Data), _cancellationToken);
+        await _eventAggregator.Publish(new RawData(e.BotUsername, e.DateTime, e.Data), cancellationToken: _cancellationToken);
     }
 
     private void _client_OnConnected(object? sender, TwitchLib.Client.Events.OnConnectedArgs e)
@@ -136,9 +156,33 @@ public class TwitchService : IService
         foreach (var channel in _twitchConfig.Channels)
         {
             _client.JoinChannel(channel);
-            _client.SendMessage(channel, "Hi everyone! @Thindal is done with me for tonight. He's also not going to watch black panther but going to bed with a book. Good evening everyone! <3");
+            // Lets not send a message
+            //_client.SendMessage(channel, "Hi everyone! I am a bot and @thindal is my daddy. I'll be quiet now. <3");
             
         }
 
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                _eventAggregator.Unsubscribe<Shared.Notifications.Chat.ChatMessage>(this);
+                // TODO: dispose managed state (managed objects)
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }
