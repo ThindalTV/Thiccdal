@@ -8,6 +8,7 @@ using Thiccdal.OverlayService;
 using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
 using Thiccdal.TwitchService.Config;
+using Thiccdal.WebSocketHost;
 
 Console.WriteLine("Starting Thiccdal.");
 
@@ -30,6 +31,7 @@ Console.WriteLine("Registering Thiccdal services.");
 servicesCollection.AddTwitchService(config);
 servicesCollection.AddSingleton<IService, ConsoleControlService>();
 servicesCollection.AddSingleton<IService, OverlayConnectionService>();
+servicesCollection.AddSingleton<IService, WebSocketHostService>();
 
 var serviceProvider = servicesCollection.BuildServiceProvider();
 

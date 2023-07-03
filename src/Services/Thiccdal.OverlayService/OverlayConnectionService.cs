@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Thiccdal.Shared;
@@ -30,6 +31,14 @@ namespace Thiccdal.OverlayService
         private async Task RawDataNotificationHandler(RawData notification, CancellationToken cancellationToken)
         {
             await SendToHub(nameof(RawData), notification, cancellationToken);
+
+            var tempHubUrl = "http://localhost:1234/hub";
+            var tempConnection = new HubConnectionBuilder()
+                .WithUrl(tempHubUrl)
+                .Build();
+            await tempConnection.StartAsync(cancellationToken);
+            await tempConnection.SendAsync("Send", "OverlayConnectionService", "Hello from OverlayConnectionService");
+            await tempConnection.StopAsync(cancellationToken);
         }
         private async Task ChatMessageHandler(ChatMessage message, CancellationToken cancellationToken)
         {

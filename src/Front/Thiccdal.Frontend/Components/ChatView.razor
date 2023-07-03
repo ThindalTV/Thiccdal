@@ -38,7 +38,7 @@
 
     protected async Task SendChatMessage()
     {
-        await hubConnection.SendAsync(nameof(ChatMessage), new ChatMessage("Twitch", "Setolyx", "Thiccdal", DateTime.Now, MessageToSend));
+        await hubConnection.SendAsync(nameof(ChatMessage), new ChatMessage("Twitch", "TheCaptainCoder", "Thiccdal", DateTime.Now, MessageToSend));
     }
 
     private void AddChatMessage(ChatMessage newChatMessage)
