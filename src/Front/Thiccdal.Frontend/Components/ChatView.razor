@@ -2,24 +2,57 @@
 @using Thiccdal.Shared.Notifications.Chat;
 
 @inject NavigationManager Navigation
-<h3>Chat View</h3>
-<input type="text" @bind-value="MessageToSend" /> <button @onclick="SendChatMessage">Send</button><br />
-@foreach(var chat in ChatMessages)
-{
-    <div class="chatMessage row">
-        <div class="col-1 source">@chat.Source</div>
-        <div class="col-1 time">@chat.Timestamp.ToLongTimeString()</div>
-        <div class="col-1 channel">@chat.Channel</div>
-        <div class="col-1 sender">@chat.Sender</div>
-        <div class="col-8 message">@chat.Message</div>
-    </div>
-}
+<MudCard>
+    <MudCardHeader>Chat</MudCardHeader>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="4">
+                <MudTextField T="string" InputType="InputType.Text" Label="Chat message" @bind-value="MessageToSend" />
+            </MudItem>
+            <MudItem xs="4">
+                <MudSelect T="string" @bind-Value="@ChatMessageTarget">
+                    <MudSelectItem Value="@("Twitch")">Twitch</MudSelectItem>
+                    <MudSelectItem Value="@("Discord")">Discord</MudSelectItem>
+                    <MudSelectItem Value="@("All")">All</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="4" Style="margin-top: auto;">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="SendChatMessage">Send chat</MudButton>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTable Items="ChatMessages">
+                    <ColGroup>
+                        <col style="width: 16%;" />
+                        <col style="width: 30%;"/>
+                        <col />
+                    </ColGroup>
+                    <HeaderContent>
+                        @*<MudTh>Source</MudTh>*@
+                        <MudTh>Time</MudTh>
+                        @*<MudTh>Channel</MudTh>*@
+                        <MudTh>Sender</MudTh>
+                        <MudTh>Message</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        @*<MudTd DataLabel="Source">@context.Source</MudTd>*@
+                        <MudTd DataLabel="Time">@context.Timestamp.ToLocalTime().ToLongTimeString()</MudTd>
+                        @*<MudTd DataLabel="Channel">@context.Channel</MudTd>*@
+                        <MudTd DataLabel="Sender">@context.Sender</MudTd>
+                        <MudTd DataLabel="Message">@context.Message</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
 
 @code {
     HubConnection hubConnection;
     List<ChatMessage> ChatMessages = new List<ChatMessage>();
 
-    string MessageToSend;
+    string? MessageToSend = null;
+
+    string ChatMessageTarget = "All";
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,9 +71,21 @@
 
     protected async Task SendChatMessage()
     {
+        if (string.IsNullOrWhiteSpace(MessageToSend))
+        {
+            return;
+        }
+
+        if (ChatMessageTarget == "All")
+        {
+            ChatMessageTarget = "Twitch";
+        }
+
         await hubConnection.SendAsync(nameof(OutgoingChatMessage), new OutgoingChatMessage("Twitch", "Thindal", "Thiccdal", DateTime.Now, MessageToSend));
         // Twitch does not send back our own messages, so we need to add them to the chat manually
-        AddChatMessage(new ChatMessage("Twitch", "Thindal", "Thiccdal", DateTime.Now, MessageToSend));
+        AddChatMessage(new ChatMessage(ChatMessageTarget, "Thindal", "Thiccdal", DateTime.Now, MessageToSend));
+
+        MessageToSend = null;
     }
 
     private void AddChatMessage(ChatMessage newChatMessage)
@@ -54,8 +99,9 @@
             }
 
             ChatMessages.Insert(0, newChatMessage);
-        }
 
+        }
         InvokeAsync(() => StateHasChanged());
+
     }
 }

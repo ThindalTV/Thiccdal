@@ -80,7 +80,7 @@ public class TwitchService : IService, IEventSubscriber
     private async void _client_OnMessageReceived(object? sender, TwitchLib.Client.Events.OnMessageReceivedArgs e)
     {
         long unixTimeTicks = long.Parse(e.ChatMessage.TmiSentTs);
-        DateTime messageTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local).AddTicks(unixTimeTicks * TimeSpan.TicksPerMillisecond);
+        DateTime messageTime = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddTicks(unixTimeTicks * TimeSpan.TicksPerMillisecond);
 
         await _eventAggregator.Publish(new IncomingChatMessage(Source.Twitch.ToString(), e.ChatMessage.Channel, e.ChatMessage.Username, messageTime, e.ChatMessage.Message), this, _cancellationToken);
         // TODO: Attempt to locate user object. If properties have changed update it

@@ -2,17 +2,19 @@
 @using Thiccdal.Shared.Notifications;
 
 @inject NavigationManager Navigation
-
-<h3>RawDataView</h3>
-
-@foreach (var message in Messages)
-{
-    <div class="rawMessage row">
-        <div class="col-1 time">@message.DateTime.ToLongTimeString()</div>
-        <div class="col-1 sender">@message.Context</div>
-        <div class="col-10 message">@message.Data</div>
-    </div>
-}
+<MudCard>
+    <MudCardHeader>RawDataView</MudCardHeader>
+    <MudCardContent>
+        @foreach (var message in Messages)
+        {
+            <div class="rawMessage row">
+                <div class="col-1 time">@message.DateTime.ToLongTimeString()</div>
+                <div class="col-1 sender">@message.Context</div>
+                <div class="col-10 message">@message.Data</div>
+            </div>
+        }
+    </MudCardContent>
+</MudCard>
 
 @code {
     HubConnection hubConnection;

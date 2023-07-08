@@ -1,17 +1,17 @@
 ﻿@using Thiccdal.Frontend.Components
 @page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Thiccdal Control</PageTitle>
+<h1>Thiccdal Control</h1>
+<MudGrid>
+    <MudItem xs="6">
+        <ChatView />
+    </MudItem>
 
-<h1>Hello, world!</h1>
-
-<div class="col-6">
-    <ChatView />
-</div>
-<div class="col-6">
-    <RawDataView />
-</div>
-
+    <MudItem xs="6">
+        <RawDataView />
+    </MudItem>
+</MudGrid>
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
