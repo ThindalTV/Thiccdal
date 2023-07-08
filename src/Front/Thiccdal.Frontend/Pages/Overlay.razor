@@ -1,7 +1,6 @@
 ﻿@page "/overlay"
 @inject NavigationManager navigationManager
 @using Microsoft.AspNetCore.SignalR.Client;
-@using Thiccdal.Frontend.SignalR;
 
 Hullo
 
@@ -90,11 +89,11 @@ else
 
             // remove old messages if any
             _messages.Clear();
-            
+
             // Create the chat client
             string baseUrl = navigationManager.BaseUri;
 
-            _hubUrl = baseUrl.TrimEnd('/') + OverlayHub.HubUrl;
+            _hubUrl = "http://localhost:1234/hub";
 
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(_hubUrl)
@@ -115,6 +114,7 @@ else
 
     private void BroadcastMessage(string name, string message)
     {
+        Console.WriteLine($"Attempting to send message {message} from {name}");
         bool isMine = name.Equals(_username, StringComparison.OrdinalIgnoreCase);
 
         _messages.Add(new Message(name, message, isMine));

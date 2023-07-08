@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
 using Thiccdal.Shared.Notifications;
@@ -18,47 +15,49 @@ namespace Thiccdal.OverlayService
 
         public OverlayConnectionService(IEventAggregator eventAggregator)
         {
-            _hubUrl = "http://localhost:5025/overlayhub";
+            _hubUrl = "http://localhost:1234/hub";
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(_hubUrl)
                 .Build();
             _eventAggregator = eventAggregator;
 
             _eventAggregator.Subscribe<RawData>(this, RawDataNotificationHandler);
-            _eventAggregator.Subscribe<ChatMessage>(this, ChatMessageHandler);
+            _eventAggregator.Subscribe<IncomingChatMessage>(this, ChatMessageHandler);
         }
 
         private async Task RawDataNotificationHandler(RawData notification, CancellationToken cancellationToken)
         {
             await SendToHub(nameof(RawData), notification, cancellationToken);
-
-            var tempHubUrl = "http://localhost:1234/hub";
-            var tempConnection = new HubConnectionBuilder()
-                .WithUrl(tempHubUrl)
-                .Build();
-            await tempConnection.StartAsync(cancellationToken);
-            await tempConnection.SendAsync("Send", "OverlayConnectionService", "Hello from OverlayConnectionService");
-            await tempConnection.StopAsync(cancellationToken);
         }
         private async Task ChatMessageHandler(ChatMessage message, CancellationToken cancellationToken)
         {
-            await SendToHub(nameof(ChatMessage), message, cancellationToken);
+            await SendToHub(nameof(IncomingChatMessage), message, cancellationToken);
         }
+
+
 
         private async Task SubscribeToSignalRHub()
         {
+            while(_hubConnection.State == HubConnectionState.Connecting)
+            {
+                // Wait for the connection to be established
+                await Task.Delay(500);
+            }
+
             if (_hubConnection.State != HubConnectionState.Connected)
             {
                 await _hubConnection.StartAsync();
-            }
-
-            if (_hubConnection.State == HubConnectionState.Connected)
-            {
                 _hubConnection.On<string, string>("Broadcast", BroadcastMessageHandler);
-                _hubConnection.On<ChatMessage>(nameof(ChatMessage), IncomingChatMessageHandler);
+                _hubConnection.On<OutgoingChatMessage>(nameof(OutgoingChatMessage), OutgoingChatMessageHandler);
+                _hubConnection.On<IncomingChatMessage>(nameof(IncomingChatMessage), IncomingChatMessageHandler);
             }
         }
-        void IncomingChatMessageHandler(ChatMessage message)
+        void OutgoingChatMessageHandler(OutgoingChatMessage message)
+        {
+            _eventAggregator.Publish(message, this);
+        }
+
+        void IncomingChatMessageHandler(IncomingChatMessage message)
         {
             _eventAggregator.Publish(message, this);
         }
@@ -67,7 +66,7 @@ namespace Thiccdal.OverlayService
         {
             if (_hubConnection.State != HubConnectionState.Connected)
             {
-                await _hubConnection.StartAsync(cancellationToken);
+                  await SubscribeToSignalRHub();
             }
 
             if (_hubConnection.State == HubConnectionState.Connected)

@@ -1,5 +1,4 @@
 using Thiccdal.Frontend.Data;
-using Thiccdal.Frontend.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +25,5 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
-app.MapHub<OverlayHub>(OverlayHub.HubUrl);
 
 app.Run();

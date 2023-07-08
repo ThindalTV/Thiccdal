@@ -26,10 +26,10 @@
         // Subscribe to the signalr hub and get raw messages as they arrive
         hubConnection = new HubConnectionBuilder()
             .WithUrl(
-                Navigation.ToAbsoluteUri("/overlayhub"))
+                "http://localhost:1234/hub")
             .Build();
 
-        hubConnection.On<ChatMessage>(nameof(ChatMessage), AddChatMessage);
+        hubConnection.On<IncomingChatMessage>(nameof(IncomingChatMessage), AddChatMessage);
 
         await hubConnection.StartAsync();
 
@@ -38,7 +38,9 @@
 
     protected async Task SendChatMessage()
     {
-        await hubConnection.SendAsync(nameof(ChatMessage), new ChatMessage("Twitch", "TheCaptainCoder", "Thiccdal", DateTime.Now, MessageToSend));
+        await hubConnection.SendAsync(nameof(OutgoingChatMessage), new OutgoingChatMessage("Twitch", "Thindal", "Thiccdal", DateTime.Now, MessageToSend));
+        // Twitch does not send back our own messages, so we need to add them to the chat manually
+        AddChatMessage(new ChatMessage("Twitch", "Thindal", "Thiccdal", DateTime.Now, MessageToSend));
     }
 
     private void AddChatMessage(ChatMessage newChatMessage)

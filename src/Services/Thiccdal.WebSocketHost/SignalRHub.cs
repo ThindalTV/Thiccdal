@@ -29,7 +29,7 @@ public class WebSocketHostService : IService
 
                 appBuilder.UseEndpoints(endPoints =>
                 {
-                    endPoints.MapHub<MyHub>(MyHub.HubUrl);
+                    endPoints.MapHub<CommunicationsHub>(CommunicationsHub.HubUrl);
                 });
             });
 
@@ -43,14 +43,3 @@ public class WebSocketHostService : IService
         await Task.CompletedTask;
     }
 }
-
-class MyHub : Hub
-{
-    public const string HubUrl = "/hub";
-
-    public async Task Send(string name, string message)
-    {
-        await Clients.All.SendAsync("Send", name, message);
-    }
-}
-

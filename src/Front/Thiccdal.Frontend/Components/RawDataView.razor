@@ -23,7 +23,7 @@
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/overlayhub"))
+            .WithUrl("http://localhost:1234/hub")
             .Build();
 
         await hubConnection.StartAsync();
@@ -36,7 +36,7 @@
 
     private void LogStart()
     {
-        AddRawDataToView(new RawData("Local", DateTime.Now, $"Connected to {Navigation.ToAbsoluteUri("/overlayhub")}. State is {hubConnection.State}"));
+        AddRawDataToView(new RawData("Local", DateTime.Now, $"Connected to hub. State is {hubConnection.State}"));
     }
 
     private void AddRawDataToView(RawData newRawData)

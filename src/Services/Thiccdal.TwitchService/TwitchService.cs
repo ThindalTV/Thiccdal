@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
 using Thiccdal.Shared.Notifications;
+using Thiccdal.Shared.Notifications.Chat;
 using Thiccdal.Shared.Notifications.Internals;
 using Thiccdal.TwitchService.Config;
 using TwitchLib.Client;
@@ -37,7 +38,7 @@ public class TwitchService : IService, IEventSubscriber
         _client = new TwitchClient(customClient);
 
         // Register events to listen for
-        _eventAggregator.Subscribe<ChatMessage>(this, SendMessageHandler);
+        _eventAggregator.Subscribe<OutgoingChatMessage>(this, SendMessageHandler);
     }
 
     private async Task SendMessageHandler(ChatMessage message, CancellationToken cancellationToken)
@@ -81,7 +82,7 @@ public class TwitchService : IService, IEventSubscriber
         long unixTimeTicks = long.Parse(e.ChatMessage.TmiSentTs);
         DateTime messageTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local).AddTicks(unixTimeTicks * TimeSpan.TicksPerMillisecond);
 
-        await _eventAggregator.Publish(new ChatMessage(Source.Twitch.ToString(), e.ChatMessage.Channel, e.ChatMessage.Username, messageTime, e.ChatMessage.Message), this, _cancellationToken);
+        await _eventAggregator.Publish(new IncomingChatMessage(Source.Twitch.ToString(), e.ChatMessage.Channel, e.ChatMessage.Username, messageTime, e.ChatMessage.Message), this, _cancellationToken);
         // TODO: Attempt to locate user object. If properties have changed update it
         var user = new UserInfo()
         {
@@ -157,6 +158,7 @@ public class TwitchService : IService, IEventSubscriber
         foreach (var channel in _twitchConfig.Channels)
         {
             _client.JoinChannel(channel);
+            _client.SendMessage(channel, "Hi, I'm Erics bad coder friend.");
             // Lets not send a message
             //_client.SendMessage(channel, "Hi everyone! I am a bot and @thindal is my daddy. I'll be quiet now. <3");
             
