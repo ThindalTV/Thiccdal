@@ -54,14 +54,16 @@
 
     string ChatMessageTarget = "All";
 
+    public ChatView()
+    {
+        hubConnection = new HubConnectionBuilder()
+        .WithUrl("http://localhost:1234/hub")
+        .Build();
+    }
+
     protected override async Task OnInitializedAsync()
     {
         // Subscribe to the signalr hub and get raw messages as they arrive
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(
-                "http://localhost:1234/hub")
-            .Build();
-
         hubConnection.On<IncomingChatMessage>(nameof(IncomingChatMessage), AddChatMessage);
 
         await hubConnection.StartAsync();

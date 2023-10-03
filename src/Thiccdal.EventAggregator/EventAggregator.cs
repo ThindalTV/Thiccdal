@@ -61,7 +61,7 @@ public class EventAggregator : IEventAggregator
             Handler = (INotification arg1, CancellationToken arg2) => handler((TSubscribeNotification)arg1, arg2)
         };
         // Add handler to list for TSubscribeNotification
-        if (_handlers.TryGetValue(typeof(TSubscribeNotification), out Events? events))
+            if (_handlers.TryGetValue(typeof(TSubscribeNotification), out var events))
         {
             events.EventsList.Add(@event);
         }
@@ -73,10 +73,10 @@ public class EventAggregator : IEventAggregator
     }
 
     public void Unsubscribe<TSubscribeNotification>(IEventSubscriber subscriber)
-        where TSubscribeNotification : INotification
+        where TSubscribeNotification : notnull, INotification
     {
         // Locate the event list for this notification type
-        if (_handlers.TryGetValue(typeof(TSubscribeNotification), out Events events))
+        if (_handlers.TryGetValue(typeof(TSubscribeNotification), out var events))
         {
             var eventsToRemove = new List<Event>();
             // Look for the event with the subscriber and remove it
@@ -99,6 +99,11 @@ public class EventAggregator : IEventAggregator
 internal class Events
 {
     public List<Event> EventsList { get; init; }
+
+    public Events()
+    {
+        EventsList = new List<Event>();
+    }
 }
 
 internal class Event
