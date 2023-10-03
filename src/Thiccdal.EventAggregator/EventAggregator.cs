@@ -45,6 +45,12 @@ public class EventAggregator : IEventAggregator
         return Task.CompletedTask;
     }
 
+    public void Subscribe<TSubscribeNotification>(IEventSubscriber subscriber, Func<TSubscribeNotification, CancellationToken, Task> handler)
+    where TSubscribeNotification : notnull, INotification
+    {
+        Subscribe<TSubscribeNotification>(subscriber, null, (TSubscribeNotification arg1, CancellationToken arg2) => handler((TSubscribeNotification)arg1, arg2));
+    }
+
     public void Subscribe<TSubscribeNotification>(IEventSubscriber subscriber, Func<TSubscribeNotification, bool>? predicate, Func<TSubscribeNotification, CancellationToken, Task> handler)
         where TSubscribeNotification : notnull, INotification
     {
