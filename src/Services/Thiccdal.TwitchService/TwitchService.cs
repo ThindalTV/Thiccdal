@@ -158,10 +158,12 @@ public class TwitchService : IService, IEventSubscriber
         foreach (var channel in _twitchConfig.Channels)
         {
             _client.JoinChannel(channel);
-            _client.SendMessage(channel, "Hi, I'm Erics bad coder friend.");
+            //_client.SendMessage(channel, "Question not the bot. Accept the bot and let it flow, and will realize there was no bot, it was you all along.");
+            _client.SendMessage(channel, "Oh, and hi. Thindal is my daddy. ^^");
             // Lets not send a message
+            // My daddy is a poo and should pay more attention to me. :(
             //_client.SendMessage(channel, "Hi everyone! I am a bot and @thindal is my daddy. I'll be quiet now. <3");
-            
+
         }
 
     }

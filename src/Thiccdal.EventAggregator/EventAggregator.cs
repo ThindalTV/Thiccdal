@@ -4,22 +4,23 @@ namespace Thiccdal.EventAggregator;
 
 public class EventAggregator : IEventAggregator
 {
-    private readonly Dictionary<Type, List<Event>> _handlers;
+    private readonly Dictionary<Type, List<Event<Notification>>> _handlers;
 
     public EventAggregator()
     {
-        _handlers = new Dictionary<Type, List<Event>>();
+        _handlers = new Dictionary<Type, List<Event<Notification>>>();
     }
 
-    public Task Publish<TPublishNotificationType>(TPublishNotificationType notification, IEventSubscriber? @this = null, CancellationToken cancellationToken = default) where TPublishNotificationType : Notification
+    public Task Publish<TPublishNotificationType>(TPublishNotificationType notification, IEventSubscriber? @this = null, CancellationToken cancellationToken = default)
+        where TPublishNotificationType : Notification
     {
         // Locate dictionary entry for type T and call all handlers
         if (_handlers.TryGetValue(typeof(TPublishNotificationType), out var events))
         {
             List<Task> tasks = new();
-            var eventsToRemove = new List<Event>();
+            var eventsToRemove = new List<Event<TPublishNotificationType>>();
             // Execute each handler
-            foreach (Event @event in events)
+            foreach (var @event in events)
             {
                 try
                 {
@@ -31,7 +32,7 @@ public class EventAggregator : IEventAggregator
                 }
                 catch (ObjectDisposedException)
                 {
-                    eventsToRemove.Add(@event);
+                    eventsToRemove.Add((Event<TPublishNotificationType>)@event);
                 }
             }
             if (eventsToRemove.Any())
@@ -47,20 +48,21 @@ public class EventAggregator : IEventAggregator
     public void Subscribe<TSubscribeNotification>(IEventSubscriber subscriber, Func<TSubscribeNotification, CancellationToken, Task> handler)
         where TSubscribeNotification : Notification
     {
-        var @event = new Event()
+        var @event = new Event<TSubscribeNotification>()
         {
             Subscriber = subscriber,
-            Handler = (Notification arg1, CancellationToken arg2) => { return handler((TSubscribeNotification)arg1, arg2); }
+            Predicate = (TSubscribeNotification notification) => { return predicate(notification); },
+            Handler = (TSubscribeNotification arg1, CancellationToken arg2) => { return handler((TSubscribeNotification)arg1, arg2); }
         };
         // Add handler to list for TSubscribeNotification
-        if (_handlers.TryGetValue(typeof(TSubscribeNotification), out List<Event> events))
+        if (_handlers.TryGetValue(typeof(TSubscribeNotification), out List<Event<TSubscribeNotification>> events))
         {
             events.Add(@event);
         }
         else
         {
             _handlers.Add(typeof(TSubscribeNotification),
-                new List<Event>() { @event });
+                new List<Event<TSubscribeNotification>>() { @event });
         }
     }
 
@@ -68,9 +70,9 @@ public class EventAggregator : IEventAggregator
         where TSubscribeNotification : Notification
     {
         // Locate the event list for this notification type
-        if (_handlers.TryGetValue(typeof(TSubscribeNotification), out List<Event> events))
+        if (_handlers.TryGetValue(typeof(TSubscribeNotification), out List<Event<TSubscribeNotification>> events))
         {
-            var eventsToRemove = new List<Event>();
+            var eventsToRemove = new List<Event<TSubscribeNotification>>();
             // Look for the event with the subscriber and remove it
             foreach (Event @event in events)
             {
@@ -88,8 +90,9 @@ public class EventAggregator : IEventAggregator
     }
 }
 
-internal struct Event
+internal struct Event<TNotificationType>
 {
     public required IDisposable Subscriber { get; init; }
-    public required Func<Notification, CancellationToken, Task> Handler { get; init; }
+    public required Func<TNotificationType, bool> Predicate { get; init; }
+    public required Func<TNotificationType, CancellationToken, Task> Handler { get; init; }
 }
