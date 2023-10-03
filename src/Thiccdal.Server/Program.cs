@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ResponderService;
 using System.Reflection;
 using Thiccdal.ConsoleControlService;
 using Thiccdal.EventAggregator;
@@ -32,6 +33,7 @@ servicesCollection.AddTwitchService(config);
 servicesCollection.AddSingleton<IService, ConsoleControlService>();
 servicesCollection.AddSingleton<IService, OverlayConnectionService>();
 servicesCollection.AddSingleton<IService, WebSocketHostService>();
+servicesCollection.AddSingleton<IService, ChatResponderService>();
 
 var serviceProvider = servicesCollection.BuildServiceProvider();
 

@@ -17,16 +17,11 @@
 </MudCard>
 
 @code {
-    HubConnection hubConnection;
+    HubConnection hubConnection = new HubConnectionBuilder()
+    .WithUrl("http://localhost:1234/hub")
+    .Build();
 
     List<RawData> Messages = new List<RawData>();
-
-    public RawDataView()
-    {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:1234/hub")
-            .Build();
-    }
 
     protected override async Task OnInitializedAsync()
     {

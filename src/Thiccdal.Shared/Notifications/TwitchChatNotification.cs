@@ -2,11 +2,13 @@
 
 namespace Thiccdal.Shared.Notifications;
 
+[Flags]
 public enum Source
 {
-    Twitch,
-    Discord, // WIP
-    Twitter // WIP
+    All = Twitch | Discord | Twitter,
+    Twitch = 1,
+    Discord = 2, // WIP
+    Twitter = 4 // WIP
 }
 
 [Flags]

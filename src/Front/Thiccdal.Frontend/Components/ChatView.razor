@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.SignalR.Client;
 @using Thiccdal.Shared.Notifications.Chat;
+@using Thiccdal.Shared.Notifications;
 
 @inject NavigationManager Navigation
 <MudCard>
@@ -10,10 +11,10 @@
                 <MudTextField T="string" InputType="InputType.Text" Label="Chat message" @bind-value="MessageToSend" />
             </MudItem>
             <MudItem xs="4">
-                <MudSelect T="string" @bind-Value="@ChatMessageTarget">
-                    <MudSelectItem Value="@("Twitch")">Twitch</MudSelectItem>
-                    <MudSelectItem Value="@("Discord")">Discord</MudSelectItem>
-                    <MudSelectItem Value="@("All")">All</MudSelectItem>
+                <MudSelect T="Source" @bind-Value="@ChatMessageTarget">
+                    <MudSelectItem Value="@(Source.Twitch)">Twitch</MudSelectItem>
+                    <MudSelectItem Value="@(Source.Discord)">Discord</MudSelectItem>
+                    <MudSelectItem Value="@(Source.All)">All</MudSelectItem>
                 </MudSelect>
             </MudItem>
             <MudItem xs="4" Style="margin-top: auto;">
@@ -47,19 +48,15 @@
 </MudCard>
 
 @code {
-    HubConnection hubConnection;
+    HubConnection hubConnection = new HubConnectionBuilder()
+        .WithUrl("http://localhost:1234/hub")
+        .Build();
+
     List<ChatMessage> ChatMessages = new List<ChatMessage>();
 
     string? MessageToSend = null;
 
-    string ChatMessageTarget = "All";
-
-    public ChatView()
-    {
-        hubConnection = new HubConnectionBuilder()
-        .WithUrl("http://localhost:1234/hub")
-        .Build();
-    }
+    Source ChatMessageTarget;
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,12 +75,7 @@
             return;
         }
 
-        if (ChatMessageTarget == "All")
-        {
-            ChatMessageTarget = "Twitch";
-        }
-
-        await hubConnection.SendAsync(nameof(OutgoingChatMessage), new OutgoingChatMessage("Twitch", "Thindal", "Thiccdal", DateTime.Now, MessageToSend));
+        await hubConnection.SendAsync(nameof(OutgoingChatMessage), new OutgoingChatMessage(Source.Twitch, "Thindal", "Thiccdal", DateTime.Now, MessageToSend));
         // Twitch does not send back our own messages, so we need to add them to the chat manually
         AddChatMessage(new ChatMessage(ChatMessageTarget, "Thindal", "Thiccdal", DateTime.Now, MessageToSend));
 

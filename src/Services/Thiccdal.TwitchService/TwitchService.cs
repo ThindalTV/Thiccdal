@@ -37,17 +37,15 @@ public class TwitchService : IService, IEventSubscriber
         _client = new TwitchClient(customClient);
 
         // Register events to listen for
-        _eventAggregator.Subscribe<OutgoingChatMessage>(this, _ => true, SendMessageHandler);
+        _eventAggregator.Subscribe<OutgoingChatMessage>(this, msg => msg.Source.HasFlag(Source.Twitch), SendMessageHandler);
     }
 
     private async Task SendMessageHandler(ChatMessage message, CancellationToken cancellationToken)
     {
-        if(message.Source != Source.Twitch.ToString())
-        {
-            return;
-        }
-
-        if( _client.JoinedChannels.Any(js => js.Channel.ToLower() == message.Channel.ToLower()) )
+        if( _client.JoinedChannels.Any(js => string.Equals(
+            js.Channel, 
+            message.Channel, 
+            StringComparison.CurrentCultureIgnoreCase)) )
         {
             _client.SendMessage(message.Channel, message.Message);
             await _eventAggregator.Publish(new LogMessageNotification(nameof(TwitchService), $"Message to {message.Channel}: {message.Message}"));
@@ -81,7 +79,7 @@ public class TwitchService : IService, IEventSubscriber
         long unixTimeTicks = long.Parse(e.ChatMessage.TmiSentTs);
         DateTime messageTime = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddTicks(unixTimeTicks * TimeSpan.TicksPerMillisecond);
 
-        await _eventAggregator.Publish(new IncomingChatMessage(Source.Twitch.ToString(), e.ChatMessage.Channel, e.ChatMessage.Username, messageTime, e.ChatMessage.Message), this, _cancellationToken);
+        await _eventAggregator.Publish(new IncomingChatMessage(Source.Twitch, e.ChatMessage.Channel, e.ChatMessage.Username, messageTime, e.ChatMessage.Message), this, _cancellationToken);
         // TODO: Attempt to locate user object. If properties have changed update it
         var user = new UserInfo()
         {
