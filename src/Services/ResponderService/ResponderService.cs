@@ -10,8 +10,6 @@ public class ChatResponderService : IService, IEventSubscriber
     public ChatResponderService(IEventAggregator eventAggregator)
     {
         _eventAggregator = eventAggregator;
-
-
     }
 
 
@@ -39,7 +37,17 @@ public class ChatResponderService : IService, IEventSubscriber
                         new OutgoingChatMessage(msg.Source, "thindal", "Thiccdal", DateTime.Now, "Hi there!"));
             }
         }
-        return Task.CompletedTask;
+        else if (
+            (string.Equals(msg.Sender, "thindal", StringComparison.CurrentCultureIgnoreCase)
+                || string.Equals(msg.Sender, "dukasoft", StringComparison.CurrentCultureIgnoreCase))
+            && msg.Message.StartsWith("!so ", StringComparison.CurrentCultureIgnoreCase))
+        {
+            var channel = msg.Message.Split(' ')[1];
+            string outMessage = $"Did you know that {channel} streams and are awesome? Because they are!";
+            _eventAggregator.Publish(new OutgoingChatMessage(msg.Source, msg.Channel, "Thindal", DateTime.Now, outMessage));
+
+        }
+            return Task.CompletedTask;
     }
 
     public Task Stop()

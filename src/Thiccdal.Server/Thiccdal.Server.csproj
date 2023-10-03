@@ -38,6 +38,7 @@
     <ProjectReference Include="..\Services\Thiccdal.OverlayService\Thiccdal.OverlayService.csproj" />
     <ProjectReference Include="..\Services\Thiccdal.TwitchService\Thiccdal.TwitchService.csproj" />
     <ProjectReference Include="..\Services\Thiccdal.WebSocketHost\Thiccdal.WebSocketHost.csproj" />
+    <ProjectReference Include="..\Services\TwitchShoutoutService\TwitchShoutoutService.csproj" />
     <ProjectReference Include="..\Thiccdal.EventAggregator\Thiccdal.EventAggregator.csproj" />
     <ProjectReference Include="..\Thiccdal.Shared\Thiccdal.Shared.csproj" />
   </ItemGroup>

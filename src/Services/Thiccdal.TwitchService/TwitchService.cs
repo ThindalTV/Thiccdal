@@ -1,10 +1,14 @@
 ﻿using Microsoft.Extensions.Options;
+using System.Net.Http;
 using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
 using Thiccdal.Shared.Notifications;
 using Thiccdal.Shared.Notifications.Chat;
 using Thiccdal.Shared.Notifications.Internals;
 using Thiccdal.TwitchService.Config;
+using TwitchLib.Api;
+using TwitchLib.Api.Core.HttpCallHandlers;
+using TwitchLib.Api.Services;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
@@ -21,11 +25,15 @@ public class TwitchService : IService, IEventSubscriber
     private readonly IEventAggregator _eventAggregator;
     private readonly TwitchConfig _twitchConfig;
     private readonly TwitchClient _client;
-    public TwitchService(IEventAggregator eventAggregator, IOptions<TwitchConfig> twitchConfig)
+    private readonly TwitchAPI _twitchApi;
+    private readonly HttpClient _twitchHttpClient;
+    public TwitchService(IEventAggregator eventAggregator, IHttpClientFactory httpClientFactory, IOptions<TwitchConfig> twitchConfig)
     {
         _eventAggregator = eventAggregator;
         _twitchConfig = twitchConfig?.Value ?? throw new ArgumentNullException(nameof(twitchConfig));
         _ = _twitchConfig.Login ?? throw new ArgumentNullException(nameof(twitchConfig), "Missing login information.");
+
+        _twitchHttpClient = httpClientFactory.CreateClient("TwitchClient");
 
         var clientOptions = new ClientOptions
         {
@@ -36,8 +44,13 @@ public class TwitchService : IService, IEventSubscriber
         WebSocketClient customClient = new WebSocketClient(clientOptions);
         _client = new TwitchClient(customClient);
 
+        _twitchApi = new TwitchAPI();
+        _twitchApi.Settings.ClientId = _twitchConfig.Login.Username;
+        _twitchApi.Settings.AccessToken = _twitchConfig.Login.OAuthToken;
+        
         // Register events to listen for
         _eventAggregator.Subscribe<OutgoingChatMessage>(this, msg => msg.Source.HasFlag(Source.Twitch), SendMessageHandler);
+        _eventAggregator.Subscribe<ShoutoutCommand>(this, msg => msg.Source.HasFlag(Source.Twitch), ShoutoutHandler);
     }
 
     private async Task SendMessageHandler(ChatMessage message, CancellationToken cancellationToken)
@@ -50,6 +63,16 @@ public class TwitchService : IService, IEventSubscriber
             _client.SendMessage(message.Channel, message.Message);
             await _eventAggregator.Publish(new LogMessageNotification(nameof(TwitchService), $"Message to {message.Channel}: {message.Message}"));
         }
+    }
+
+    private async Task ShoutoutHandler(ShoutoutCommand so, CancellationToken ct)
+    {
+        var msg = new HttpRequestMessage(
+            HttpMethod.Post,
+            $"chat/shoutouts?from_broadcaster_id={so.Channel}&to_broadcaster_id={so.Reciever}&moderator_id=Thiccdal"
+            );
+
+        var resp = await _twitchHttpClient.SendAsync(msg);
     }
 
     public async Task Start(CancellationToken cancellationToken)

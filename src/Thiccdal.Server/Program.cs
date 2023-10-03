@@ -10,6 +10,7 @@ using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
 using Thiccdal.TwitchService.Config;
 using Thiccdal.WebSocketHost;
+using TwitchShoutoutService;
 
 Console.WriteLine("Starting Thiccdal.");
 
@@ -26,6 +27,7 @@ var servicesCollection = new ServiceCollection();
 servicesCollection.AddSingleton((IServiceProvider) => cancellationTokenSource);
 servicesCollection.AddLogging(config => config.AddConsole());
 
+
 servicesCollection.AddSingleton<IEventAggregator, EventAggregator>();
 // Register services to DI
 Console.WriteLine("Registering Thiccdal services.");
@@ -34,6 +36,7 @@ servicesCollection.AddSingleton<IService, ConsoleControlService>();
 servicesCollection.AddSingleton<IService, OverlayConnectionService>();
 servicesCollection.AddSingleton<IService, WebSocketHostService>();
 servicesCollection.AddSingleton<IService, ChatResponderService>();
+servicesCollection.AddSingleton<IService, ShoutoutService>();
 
 var serviceProvider = servicesCollection.BuildServiceProvider();
 

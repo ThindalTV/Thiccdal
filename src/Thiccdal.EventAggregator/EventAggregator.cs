@@ -26,8 +26,12 @@ public class EventAggregator : IEventAggregator
                 {
                     if (@this == null || @event.Subscriber != @this)
                     {
-                        // Execute the handler
-                        tasks.Add(@event.Handler(notification, cancellationToken));
+                        // Check if the notification matches the predicate
+                        if (@event.Predicate(notification))
+                        {
+                            // Execute the handler
+                            tasks.Add(@event.Handler(notification, cancellationToken));
+                        }
                     }
                 }
                 catch (ObjectDisposedException)
