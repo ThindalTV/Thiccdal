@@ -1,3 +1,6 @@
 ﻿namespace Thiccdal.Shared.EventAggregator;
 
-public class Notification { }
+public interface INotification
+{
+
+} 

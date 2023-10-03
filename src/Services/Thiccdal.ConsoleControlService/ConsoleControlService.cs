@@ -15,8 +15,8 @@ public class ConsoleControlService : IService, IEventSubscriber
     {
         _cancellationTokenSource = cancellationTokenSource;
         _eventAggregator = eventAggregator;
-        _eventAggregator.Subscribe<RawData>(this, RawDataNotificationHandler);
-        _eventAggregator.Subscribe<LogMessageNotification>(this, LogMessageNotificationHandler);
+        _eventAggregator.Subscribe<RawData>(this, _ => true, RawDataNotificationHandler);
+        _eventAggregator.Subscribe<LogMessageNotification>(this, _ => true, LogMessageNotificationHandler);
     }
 
     private async Task LogMessageNotificationHandler(LogMessageNotification notification, CancellationToken cancellationToken)

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading.Tasks;
-using Thiccdal.Shared.EventAggregator;
+﻿using Thiccdal.Shared.EventAggregator;
 
 namespace Thiccdal.Shared.Notifications;
 
@@ -45,7 +39,7 @@ public class UserInfo
     public int SubscribedForMonths { get; set; }
 }
 
-public class TwitchChatNotification : Notification
+public class TwitchChatNotification : INotification
 {
     public Source ChatSource { get; set; }
     public string MessageId { get; set; }

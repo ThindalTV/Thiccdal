@@ -1,8 +1,7 @@
-﻿using System;
-using Thiccdal.Shared.EventAggregator;
+﻿using Thiccdal.Shared.EventAggregator;
 
 namespace Thiccdal.Shared.Notifications;
-public class RawData : Notification
+public class RawData : INotification
 {
     public string Context { get; }
     public DateTime DateTime { get; }

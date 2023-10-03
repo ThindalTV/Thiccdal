@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Thiccdal.Shared.EventAggregator;
+﻿using Thiccdal.Shared.EventAggregator;
 
 namespace Thiccdal.Shared.Notifications.Chat;
-public class ChatMessage : Notification
+public class ChatMessage : INotification
 {
     public string Source { get; }
     public string Channel { get; }

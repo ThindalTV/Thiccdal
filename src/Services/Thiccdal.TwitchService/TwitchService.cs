@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using System.Runtime.InteropServices;
 using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
 using Thiccdal.Shared.Notifications;
@@ -38,7 +37,7 @@ public class TwitchService : IService, IEventSubscriber
         _client = new TwitchClient(customClient);
 
         // Register events to listen for
-        _eventAggregator.Subscribe<OutgoingChatMessage>(this, SendMessageHandler);
+        _eventAggregator.Subscribe<OutgoingChatMessage>(this, _ => true, SendMessageHandler);
     }
 
     private async Task SendMessageHandler(ChatMessage message, CancellationToken cancellationToken)

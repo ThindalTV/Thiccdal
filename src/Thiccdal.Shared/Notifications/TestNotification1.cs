@@ -1,7 +1,7 @@
 ﻿using Thiccdal.Shared.EventAggregator;
 
 namespace Thiccdal.Shared.Notifications;
-public class TestNotification1 : Notification
+public class TestNotification1 : INotification
 {
     public readonly string Message;
 

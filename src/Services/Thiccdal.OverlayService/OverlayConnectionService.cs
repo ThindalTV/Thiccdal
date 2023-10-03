@@ -21,8 +21,8 @@ namespace Thiccdal.OverlayService
                 .Build();
             _eventAggregator = eventAggregator;
 
-            _eventAggregator.Subscribe<RawData>(this, RawDataNotificationHandler);
-            _eventAggregator.Subscribe<IncomingChatMessage>(this, ChatMessageHandler);
+            _eventAggregator.Subscribe<RawData>(this, _ => true, RawDataNotificationHandler);
+            _eventAggregator.Subscribe<IncomingChatMessage>(this, _ => true, ChatMessageHandler);
         }
 
         private async Task RawDataNotificationHandler(RawData notification, CancellationToken cancellationToken)

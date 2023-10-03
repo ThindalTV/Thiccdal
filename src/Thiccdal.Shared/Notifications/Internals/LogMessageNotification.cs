@@ -1,7 +1,7 @@
 ﻿using Thiccdal.Shared.EventAggregator;
 
 namespace Thiccdal.Shared.Notifications.Internals;
-public class LogMessageNotification : Notification
+public class LogMessageNotification : INotification
 {
     public string Sender { get; }
     public string Message { get; }
