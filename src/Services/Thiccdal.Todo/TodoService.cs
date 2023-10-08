@@ -94,7 +94,7 @@ public class TodoService : IService, IEventSubscriber
                         notification.Channel,
                         "Thiccdal",
                         DateTime.Now,
-                        $"Added todo item: ({todoItem.Id}: {todoText}"));
+                        $"Added todo item: ({todoItem.Id}): {todoText}"));
                 break;
             case "complete":
                 var id = int.Parse(parts[2]);
@@ -165,6 +165,15 @@ public class TodoService : IService, IEventSubscriber
                         DateTime.Now,
                         $"No todo items for {notification.User.Name}"));
                 }
+                break;
+            case "clear":
+                items.Clear();
+                _eventAggregator.Publish(
+                    new OutgoingChatMessage(notification.ChatSource,
+                        notification.Channel,
+                        "Thiccdal",
+                        DateTime.Now,
+                        $"Cleared todo items for {notification.User.Name}"));
                 break;
         }
         return Task.CompletedTask;
