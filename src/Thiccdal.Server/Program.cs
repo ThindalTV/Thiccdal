@@ -8,6 +8,7 @@ using Thiccdal.EventAggregator;
 using Thiccdal.OverlayService;
 using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
+using Thiccdal.Todo;
 using Thiccdal.TwitchService.Config;
 using Thiccdal.WebSocketHost;
 using TwitchShoutoutService;
@@ -37,6 +38,7 @@ servicesCollection.AddSingleton<IService, OverlayConnectionService>();
 servicesCollection.AddSingleton<IService, WebSocketHostService>();
 servicesCollection.AddSingleton<IService, ChatResponderService>();
 servicesCollection.AddSingleton<IService, ShoutoutService>();
+servicesCollection.AddSingleton<IService, TodoService>();
 
 var serviceProvider = servicesCollection.BuildServiceProvider();
 

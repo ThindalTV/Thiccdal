@@ -17,7 +17,7 @@ internal class TwitchService : IService, IEventSubscriber
     private readonly TwitchChatManager _twitchChatManager;
     private readonly TwitchApiManager _twitchApiManager;
 
-    internal TwitchService(
+    public TwitchService(
         IEventAggregator eventAggregator,
         TwitchChatManager twitchChatManager,
         TwitchApiManager twitchApiManager)
@@ -30,7 +30,7 @@ internal class TwitchService : IService, IEventSubscriber
         _twitchChatManager.RecieveMessageHandler = MessageRecievedHandler;
 
         // Register events to listen for
-        _eventAggregator.Subscribe<OutgoingChatMessage>(this, msg => msg.Source == Source.Twitch, SendMessageHandler);
+        _eventAggregator.Subscribe<OutgoingChatMessage>(this, msg => msg.Source.HasFlag(Source.Twitch), SendMessageHandler);
         _eventAggregator.Subscribe<ShoutoutCommand>(this, msg => msg.Source.HasFlag(Source.Twitch), ShoutoutHandler);
     }
 

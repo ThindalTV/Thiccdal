@@ -14,6 +14,7 @@ public class EventAggregator : IEventAggregator
     public Task Publish<TPublishNotificationType>(TPublishNotificationType notification, IEventSubscriber? @this = null, CancellationToken cancellationToken = default)
         where TPublishNotificationType : INotification
     {
+
         // Locate dictionary entry for type T and call all handlers
         if (_handlers.TryGetValue(typeof(TPublishNotificationType), out var events))
         {
@@ -58,21 +59,24 @@ public class EventAggregator : IEventAggregator
     public void Subscribe<TSubscribeNotification>(IEventSubscriber subscriber, Func<TSubscribeNotification, bool>? predicate, Func<TSubscribeNotification, CancellationToken, Task> handler)
         where TSubscribeNotification : notnull, INotification
     {
-        var @event = new Event()
+        lock (_handlers)
         {
-            Subscriber = subscriber,
-            Predicate = (INotification notification) => predicate != null ? predicate((TSubscribeNotification)notification) : true,
-            Handler = (INotification arg1, CancellationToken arg2) => handler((TSubscribeNotification)arg1, arg2)
-        };
-        // Add handler to list for TSubscribeNotification
+            var @event = new Event()
+            {
+                Subscriber = subscriber,
+                Predicate = (INotification notification) => predicate != null ? predicate((TSubscribeNotification)notification) : true,
+                Handler = (INotification arg1, CancellationToken arg2) => handler((TSubscribeNotification)arg1, arg2)
+            };
+            // Add handler to list for TSubscribeNotification
             if (_handlers.TryGetValue(typeof(TSubscribeNotification), out var events))
-        {
-            events.EventsList.Add(@event);
-        }
-        else
-        {
-            _handlers.Add(typeof(TSubscribeNotification),
-                new Events() { EventsList = new List<Event>() { @event } });
+            {
+                events.EventsList.Add(@event);
+            }
+            else
+            {
+                _handlers.Add(typeof(TSubscribeNotification),
+                    new Events() { EventsList = new List<Event>() { @event } });
+            }
         }
     }
 

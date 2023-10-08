@@ -1,13 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Thiccdal.Shared.EventAggregator;
 using Thiccdal.Shared.Notifications;
-using Thiccdal.Shared.Notifications.Chat;
-using Thiccdal.Shared.Notifications.Internals;
 using Thiccdal.TwitchService.Config;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;

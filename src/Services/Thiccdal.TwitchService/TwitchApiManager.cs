@@ -39,7 +39,7 @@ internal class TwitchApiManager
     }
 
     // Actions
-    public async Task<string> GetAuthToken(string clientId, string clientSecret)
+    /*public async Task<string> GetAuthToken(string clientId, string clientSecret)
     {
         var msg = new HttpRequestMessage(
             HttpMethod.Post,
@@ -48,17 +48,17 @@ internal class TwitchApiManager
         var resp = await _twitchHttpClient.PostAsync(
             $"oauth2/token?client_id={clientId}&client_secret={clientSecret}&grant_type=client_credentials"
             )
-    }
+    }*/
 
     public async Task Shoutout(string channel, string reciever, CancellationToken cancellationToken)
     {
-        var msg = new HttpRequestMessage(
+        /*var msg = new HttpRequestMessage(
         HttpMethod.Post,
         
         );
 
         string url = $"chat/shoutouts?from_broadcaster_id={channel}&to_broadcaster_id={reciever}&moderator_id={channel}";
 
-        var resp = await _twitchHttpClient.PostAsync("url", null);
+        var resp = await _twitchHttpClient.PostAsync("url", null);*/
     }
 }
