@@ -29,13 +29,13 @@ public class ChatResponderService : IService, IEventSubscriber
         {
             if (string.Equals(msg.User.Name, "dukasoft", StringComparison.CurrentCultureIgnoreCase))
             {                _eventAggregator.Publish(
-                               new OutgoingChatMessage(msg.ChatSource, "thindal", "Thiccdal", DateTime.Now, "Hi there Duka you lovely hooman!"));
+                               new OutgoingChatMessage(msg.ChatSource, msg.Channel, "Thiccdal", DateTime.Now, "Hi there Duka you lovely hooman!"));
 
             }
             else
             {
                 _eventAggregator.Publish(
-                        new OutgoingChatMessage(msg.ChatSource, "thindal", "Thiccdal", DateTime.Now, "Hi there!"));
+                        new OutgoingChatMessage(msg.ChatSource, msg.Channel, "Thiccdal", DateTime.Now, "Hi there!"));
             }
         }
         else if (

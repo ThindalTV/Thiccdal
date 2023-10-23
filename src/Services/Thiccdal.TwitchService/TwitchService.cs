@@ -31,7 +31,8 @@ internal class TwitchService : IService, IEventSubscriber
 
         // Register events to listen for
         _eventAggregator.Subscribe<OutgoingChatMessage>(this, msg => msg.Source.HasFlag(Source.Twitch), SendMessageHandler);
-        _eventAggregator.Subscribe<ShoutoutCommand>(this, msg => msg.Source.HasFlag(Source.Twitch), ShoutoutHandler);
+        _eventAggregator.Subscribe<TwitchChatNotification>(this, msg => msg.ChatSource.HasFlag(Source.Twitch) && msg.Message.StartsWith("!so"), ShoutoutHandler);
+
     }
 
     private async Task SendMessageHandler(ChatMessage message, CancellationToken cancellationToken)
@@ -48,9 +49,13 @@ internal class TwitchService : IService, IEventSubscriber
         await _eventAggregator.Publish(msg, cancellationToken: _cancellationToken);
     }
 
-    private async Task ShoutoutHandler(ShoutoutCommand so, CancellationToken ct)
+    private async Task ShoutoutHandler(TwitchChatNotification inc, CancellationToken ct)
     {
-        await _twitchApiManager.Shoutout(so.Channel, so.Reciever, ct);
+        var parts = inc.Message.Split(' ');
+        if (parts.Length < 1)
+            return;
+        var recipient = inc.Message.Split(' ')[1];
+        await _twitchApiManager.Shoutout(inc.Channel, recipient, ct);
     }
 
     public async Task Start(CancellationToken cancellationToken)
@@ -58,7 +63,9 @@ internal class TwitchService : IService, IEventSubscriber
         _cancellationToken = cancellationToken;
 
         await _twitchChatManager.Start(cancellationToken);
-        await _twitchApiManager.Start(cancellationToken);
+        //await _twitchApiManager.Start(cancellationToken);
+
+        await _eventAggregator.Publish(new OutgoingChatMessage(Source.Twitch, "Thindal", "thiccdal", DateTime.Now, "Thiccdal is now online!"));
     }
 
     public async Task Stop()

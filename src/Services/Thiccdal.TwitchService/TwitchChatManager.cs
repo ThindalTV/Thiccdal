@@ -69,6 +69,8 @@ internal class TwitchChatManager
             foreach (var channel in _twitchConfig.Channels)
             {
                 _client.JoinChannel(channel);
+                // Send hello message
+                SendMessage(channel, $"Hello! I'm Thiccdal, a bot created by Thindal. I'm here to do things and mess them up.", CancellationToken.None);
             }
         }
     }
@@ -109,7 +111,6 @@ internal class TwitchChatManager
 
     public async Task Start(CancellationToken cancellationToken)
     {
-
         _client.Connect();
 
         await Task.CompletedTask;

@@ -40,7 +40,7 @@ servicesCollection.AddSingleton<IService, ChatResponderService>();
 servicesCollection.AddSingleton<IService, ShoutoutService>();
 servicesCollection.AddSingleton<IService, TodoService>();
 
-var serviceProvider = servicesCollection.BuildServiceProvider();
+ var serviceProvider = servicesCollection.BuildServiceProvider();
 
 // Load services
 Console.WriteLine("Loading services.");
