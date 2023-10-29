@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Services\MOTD\MOTD.csproj" />
     <ProjectReference Include="..\Services\ResponderService\ResponderService.csproj" />
     <ProjectReference Include="..\Services\Thiccdal.ConsoleControlService\Thiccdal.ConsoleControlService.csproj" />
     <ProjectReference Include="..\Services\Thiccdal.OverlayService\Thiccdal.OverlayService.csproj" />

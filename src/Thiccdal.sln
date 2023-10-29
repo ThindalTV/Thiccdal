@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResponderService", "Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchShoutoutService", "Services\TwitchShoutoutService\TwitchShoutoutService.csproj", "{8C3FC791-9D71-4DE6-A6BB-63148AD408BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thiccdal.Todo", "Services\Thiccdal.Todo\Thiccdal.Todo.csproj", "{8F4531E1-6796-45E9-B583-DF83188BF4E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thiccdal.Todo", "Services\Thiccdal.Todo\Thiccdal.Todo.csproj", "{8F4531E1-6796-45E9-B583-DF83188BF4E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MOTD", "Services\MOTD\MOTD.csproj", "{8A42253A-42C6-49A0-835F-9C406F1CAF32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,10 @@ Global
 		{8F4531E1-6796-45E9-B583-DF83188BF4E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F4531E1-6796-45E9-B583-DF83188BF4E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F4531E1-6796-45E9-B583-DF83188BF4E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A42253A-42C6-49A0-835F-9C406F1CAF32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A42253A-42C6-49A0-835F-9C406F1CAF32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A42253A-42C6-49A0-835F-9C406F1CAF32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A42253A-42C6-49A0-835F-9C406F1CAF32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +107,7 @@ Global
 		{C89A7D30-5EE2-4C5F-9556-57D39A38C765} = {92F3FFB0-1FD2-417E-A6B3-29A6126DCB42}
 		{8C3FC791-9D71-4DE6-A6BB-63148AD408BF} = {92F3FFB0-1FD2-417E-A6B3-29A6126DCB42}
 		{8F4531E1-6796-45E9-B583-DF83188BF4E6} = {92F3FFB0-1FD2-417E-A6B3-29A6126DCB42}
+		{8A42253A-42C6-49A0-835F-9C406F1CAF32} = {92F3FFB0-1FD2-417E-A6B3-29A6126DCB42}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D7830E9-6686-412E-8529-75ECC7EE4764}

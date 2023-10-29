@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MOTD;
 using ResponderService;
 using System.Reflection;
 using Thiccdal.ConsoleControlService;
@@ -8,6 +9,7 @@ using Thiccdal.EventAggregator;
 using Thiccdal.OverlayService;
 using Thiccdal.Shared;
 using Thiccdal.Shared.EventAggregator;
+using Thiccdal.Shared.Repositories;
 using Thiccdal.Todo;
 using Thiccdal.TwitchService.Config;
 using Thiccdal.WebSocketHost;
@@ -39,6 +41,8 @@ servicesCollection.AddSingleton<IService, WebSocketHostService>();
 servicesCollection.AddSingleton<IService, ChatResponderService>();
 servicesCollection.AddSingleton<IService, ShoutoutService>();
 servicesCollection.AddSingleton<IService, TodoService>();
+servicesCollection.AddSingleton<IService, MotdService>();
+servicesCollection.AddSingleton<IRepository, FileSystemRepository>(_=> new FileSystemRepository("Data"));
 
  var serviceProvider = servicesCollection.BuildServiceProvider();
 

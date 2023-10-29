@@ -15,6 +15,8 @@ internal class TwitchChatManager
 
     public Func<TwitchChatNotification, Task>? RecieveMessageHandler;
 
+    public Action<string>? JoinedChannel;
+
     public string[] JoinedChannels => _client.JoinedChannels.Select(js => js.Channel).ToArray();
 
     public TwitchChatManager(IOptions<TwitchConfig> twitchConfig)
@@ -69,8 +71,10 @@ internal class TwitchChatManager
             foreach (var channel in _twitchConfig.Channels)
             {
                 _client.JoinChannel(channel);
-                // Send hello message
-                SendMessage(channel, $"Hello! I'm Thiccdal, a bot created by Thindal. I'm here to do things and mess them up.", CancellationToken.None);
+                if(JoinedChannel != null)
+                {
+                    JoinedChannel(channel);
+                }
             }
         }
     }

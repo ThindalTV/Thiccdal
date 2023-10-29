@@ -53,11 +53,10 @@ public class ChatResponderService : IService, IEventSubscriber
 
     public Task Stop()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }

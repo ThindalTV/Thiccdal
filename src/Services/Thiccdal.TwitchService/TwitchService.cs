@@ -28,6 +28,7 @@ internal class TwitchService : IService, IEventSubscriber
 
         // Setup Twitch Chat
         _twitchChatManager.RecieveMessageHandler = MessageRecievedHandler;
+        _twitchChatManager.JoinedChannel = JoinedChannelHandler;
 
         // Register events to listen for
         _eventAggregator.Subscribe<OutgoingChatMessage>(this, msg => msg.Source.HasFlag(Source.Twitch), SendMessageHandler);
@@ -47,6 +48,10 @@ internal class TwitchService : IService, IEventSubscriber
     private async Task MessageRecievedHandler(TwitchChatNotification msg)
     {
         await _eventAggregator.Publish(msg, cancellationToken: _cancellationToken);
+    }
+    void JoinedChannelHandler(string channelName)
+    {
+        _eventAggregator.Publish(new JoinedChannelMessage(Source.Twitch, channelName));
     }
 
     private async Task ShoutoutHandler(TwitchChatNotification inc, CancellationToken ct)
